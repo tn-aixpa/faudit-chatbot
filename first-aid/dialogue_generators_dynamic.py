@@ -64,7 +64,21 @@ def aixpa_dynamic(documents_list, dialogue_list, speaker, options_number, manual
     
     adapter = "aixpa"
     
-    speaker = "speaker_2"
+    if speaker == "speaker_1":
+        s1_answer = []
+
+        s1_answer.append(
+            {
+                "speaker": speaker,
+                "turn_text": "Non posso generare il turno dell'operatore",
+                "ground": []
+            }        
+        )
+
+        return(s1_answer)
+
+
+    # speaker = "speaker_2"
 
 
     roles = {
