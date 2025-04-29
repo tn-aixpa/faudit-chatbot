@@ -1,6 +1,6 @@
 # Chatbot API
 
-Before creating the docker change the kubeai\_host and port in the Dockerfile. Then run:
+Before creating the docker `change the kubeai\_host and port in the Dockerfile`. Then run:
 
 ```docker build -t aixpa-chatbot-api .``` 
 
