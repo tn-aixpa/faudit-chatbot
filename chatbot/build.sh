@@ -1,1 +1,1 @@
-docker build -t hatedemics-api .
+docker build -t aixpa-chatbot-api .

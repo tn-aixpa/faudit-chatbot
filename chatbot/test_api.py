@@ -87,10 +87,10 @@ request_new_turn = {
 }
 
 # TEST GENERATION
-endpoint_url = "http://localhost:8018/turn_generation/"
-response = requests.post(endpoint_url, json.dumps(request_new_turn))
-# print(json.dumps(response.json(), indent=4, ensure_ascii=False))
-print(response.json()["turn_text"])
+# endpoint_url = "http://localhost:8018/turn_generation/"
+# response = requests.post(endpoint_url, json.dumps(request_new_turn))
+# # print(json.dumps(response.json(), indent=4, ensure_ascii=False))
+# print(response.json()["turn_text"])
 
 print()
 
