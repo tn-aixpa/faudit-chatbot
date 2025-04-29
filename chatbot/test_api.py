@@ -8,8 +8,55 @@ documents = [
     "=== PIANO FAMIGLIA COMUNE DI REVO' ANNO 2019 ===\n\nTITOLO: Partecipazione delle famiglie\nTASSONOMIA: Istituzione/coinvolgimento della consulta per la famiglia\nMACRO-AMBITO: Governance e azioni di rete\nOBIETTIVO: (nessuno specificato)\nDESCRIZIONE: L'Amministrazione comunale, sempre attenta al benessere sociale in modo particolare a quello della famiglia, intende promuovere l'istituzione di un nuovo strumento per dare risposta efficace ai bisogni di una societа sempre più complessa, per avere un confronto diretto con le varie realtа che la compongono proponendo l'istituzione di una ''Consulta comunale delle famiglie''. \nLa Consulta è un organismo che opera a supporto dell'Amministrazione comunale con le seguenti finalitа:\n- promuovere l'informazione e la formazione delle famiglie del Comune di Revò al fine di favorirne la partecipazione al bene comune;\n- essere un organo di consultazione sulle problematiche familiari;\n- promuovere iniziative atte a diffondere una cultura per la famiglia come istituzione sociale fondamentale;\n- contribuire, attraverso la propria attivitа propositiva, al miglioramento dei servizi offerti dall'Amministrazione comunale nonché alla promozione di interventi in ambiti culturali e sociali al fine di realizzare un concreto miglioramento della qualitа della vita che raggruppa al suo interno persone che rappresentano la nostra societа.\n\n-----\n\nTITOLO: Iniziative a favore dei neo maggiorenni\nTASSONOMIA: Progetti di partecipazione attiva di bambini, ragazzi e giovani (consiglio comunale dei ragazzi..)\nMACRO-AMBITO: Comunitа educante\nOBIETTIVO: (nessuno specificato)\nDESCRIZIONE: Come negli anni scorsi, in collaborazione con il Piano Giovani ''Carez'' sarа riproposta la ''Festa dei diciottenni'', un progetto il cui scopo principale è quello di creare un momento di incontro e di riflessione sul significato di appartenenza alla comunitа, dell'impegno civico, del rispetto per la cosa pubblica e l'ambiente.\n\n-----\n\nTITOLO: Consiglio Comunale dei giovani di Novella\nTASSONOMIA: Progetti di partecipazione attiva di bambini, ragazzi e giovani (consiglio comunale dei ragazzi..)\nMACRO-AMBITO: Comunitа educante\nOBIETTIVO: (nessuno specificato)\nDESCRIZIONE: Nel mese di dicembre 2017 si è costituito il nuovo Consiglio comunale dei giovani di Novella, valido ed importante organo di promozione e consultazione sulla materia ''giovani''. Sarа dato loro sostegno e collaborazione prevedendo momenti di ascolto e di collaborazione nel progettare azioni concrete a favore dei giovani. Per l'anno 2019 è in programma la nascita di uno ''spazio giovani'' aperto ai ragazzi e gestito da educatori specializzati.\n\n-----\n\nTITOLO: Feste dedicate\nTASSONOMIA: Promozione e organizzazione di eventi ludici (festa delle famiglie, spettacoli ecc.)\nMACRO-AMBITO: Comunitа educante\nOBIETTIVO: (nessuno specificato)\nDESCRIZIONE: Durante l'anno 2019 l'Assessore alle Politiche Sociali proporrа degli eventi specifici, come ad esempio la Festa della Famiglia o la Festa dello Sport, da organizzarsi sul territorio coinvolgendo le associazioni del paese al fine di coinvolgere la famiglia come elemento essenziale di una intera comunitа.\n\n-----\n\nTITOLO: Biblioteca comunale: sala studio\nTASSONOMIA: Biblioteca family-oriented / media library\nMACRO-AMBITO: Welfare territoriale e sostenibilitа\nOBIETTIVO: (nessuno specificato)\nDESCRIZIONE: Giа da qualche anno è presente presso la biblioteca una confortevole sala studio dedicata a studenti ed universitari molto frequentata ed apprezzata.\n\n-----\n\n"
 ]
 
+####################
+# GENERATION FIRST #
+####################
 
 
+# TEST GENERATION
+
+
+# request_new_turn = {
+#     "documents_list": documents,
+#     "dialogue_list":[
+#         {
+#         "speaker":"operatore",
+#         "turn_text":"scrivi un'azione per la consulta della famiglia?"
+#         }
+#     ],
+#     "user": "operatore",
+#     "tone": "informal",
+#     "chatbot_is_first": False
+
+# }
+
+# endpoint_url = "http://localhost:8018/turn_generation/"
+# response = requests.post(endpoint_url, json.dumps(request_new_turn))
+# # print(json.dumps(response.json(), indent=4, ensure_ascii=False))
+# message = response.json()["turn_text"]
+# print(message)
+
+
+# request_ground = {
+#     "documents_list": documents,    
+#     "query": message,
+#     "options_number": 3
+# }
+
+# endpoint_url = "http://localhost:8018/turn_ground/"
+# response = requests.post(endpoint_url, json.dumps(request_ground))
+
+# print(json.dumps(response.json(), indent=4, ensure_ascii=False))
+
+
+
+
+
+
+
+################
+# GROUND FIRST #
+################
 
 request_ground = {
     "documents_list": documents,    
@@ -20,7 +67,7 @@ request_ground = {
 endpoint_url = "http://localhost:8018/turn_ground/"
 response = requests.post(endpoint_url, json.dumps(request_ground))
 
-# print(json.dumps(response.json(), indent=4, ensure_ascii=False))
+print(json.dumps(response.json(), indent=4, ensure_ascii=False))
 
 grounds = []
 for ground in response.json():
@@ -37,24 +84,21 @@ request_new_turn = {
     "user": "operatore",
     "tone": "informal",
     "chatbot_is_first": False
-
 }
 
 # TEST GENERATION
 endpoint_url = "http://localhost:8018/turn_generation/"
 response = requests.post(endpoint_url, json.dumps(request_new_turn))
+# print(json.dumps(response.json(), indent=4, ensure_ascii=False))
+print(response.json()["turn_text"])
 
-print(json.dumps(response.json(), indent=4, ensure_ascii=False))
-
-print(response.status_code)
+print()
 
 #TEST STREAM
-
-# endpoint_url = "http://localhost:8018/turn_stream/"
-# response = requests.post(endpoint_url, json=request_new_turn, stream=True)
-
-# # now stream the response
-# for line in response.iter_lines():
-#     # if line:
-#         print(line.decode('utf-8'))
+endpoint_url = "http://localhost:8018/turn_stream/"
+response = requests.post(endpoint_url, json=request_new_turn, stream=True)
+# now stream the response
+for line in response.iter_lines():
+    # if line:
+        print(line.decode('utf-8'))
 
