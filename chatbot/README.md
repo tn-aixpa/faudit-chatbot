@@ -14,11 +14,11 @@ To ensure everyting is working run
 
 The espected result is:
 
-<div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
-  Testing ground retrieval...............<span style="background-color: green; color: white; padding: 2px 5px; border-radius: 3px;">PASSED</span><br>
-  Testing next turn generation...........<span style="background-color: green; color: white; padding: 2px 5px; border-radius: 3px;">PASSED</span><br>
-  Testing next turn stream...............<span style="background-color: green; color: white; padding: 2px 5px; border-radius: 3px;">PASSED</span>
-</div>
+
+> Testing ground retrieval..................**PASSED** <br>
+> Testing next turn generation...........**PASSED** <br>
+> Testing next turn stream.................**PASSED**
+
 
 # Endpoints
 
