@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends
 import uvicorn
 import os
-from dialogue_generators_dynamic import generate_answer, get_ground, stream_answer
+from chatbot_functions import generate_answer, get_ground, stream_answer
 # from auth import app as auth_app, get_current_active_user, User
 import time
 import argparse

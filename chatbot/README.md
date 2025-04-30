@@ -1,6 +1,9 @@
 # Chatbot API
 
-Before creating the docker `change the kubeai\_host and port in the Dockerfile`. Then run:
+> [!IMPORTANT]  
+> To use the API you need a vLLM server running.
+
+Before creating the docker change the kubeai\_host and port in the Dockerfile. Then run:
 
 ```docker build -t aixpa-chatbot-api .``` 
 
@@ -10,7 +13,7 @@ Default port for the server is 8018, can be changed in the Dockerfile
 
 To ensure everyting is working run 
 
-`python test.py --host 0.0.0.0 --port 8018`
+`python test_api.py --host 0.0.0.0 --port 8018`
 
 The espected result is:
 
