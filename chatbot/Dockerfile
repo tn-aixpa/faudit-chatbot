@@ -14,4 +14,4 @@ COPY ./ /code/
 
 WORKDIR /code
 
-CMD ["python", "start_api.py", "--port", "8013", "--host", "0.0.0.0", "--kubeai_host", "http://localhost:1235/v1"]
+CMD ["python", "start_api.py", "--port", "8018", "--host", "0.0.0.0", "--kubeai_host", "http://localhost:1235/v1"]
