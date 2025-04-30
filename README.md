@@ -3,7 +3,7 @@
 > [!IMPORTANT]  
 > To use the API you need a kubeai server running.
 
-Before creating the docker change the `kubeai_host` and `port` in the `Dockerfile`. Then run:
+Before creating the docker change the `--kubeai_host` in the `Dockerfile`. Then run:
 
 ```docker build -t aixpa-chatbot-api .``` 
 
