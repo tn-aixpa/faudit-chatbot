@@ -1,7 +1,7 @@
 # Chatbot API
 
 > [!IMPORTANT]  
-> To use the API you need a vLLM server running.
+> To use the API you need a kubeai server running.
 
 Before creating the docker change the kubeai\_host and port in the Dockerfile. Then run:
 
