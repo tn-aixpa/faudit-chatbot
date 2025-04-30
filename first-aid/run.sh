@@ -1,1 +1,0 @@
-docker run -p 8013:8013  hatedemics-api
