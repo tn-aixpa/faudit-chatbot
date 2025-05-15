@@ -6,3 +6,4 @@ split
 wtpsplit
 rank_bm25
 jprint
+torch

@@ -12,4 +12,4 @@ COPY ./ /code/
 
 WORKDIR /code
 
-CMD ["python", "start_api.py", "--port", "8018", "--host", "0.0.0.0", "--kubeai_host", "http://localhost:1235/v1"]
+CMD ["sh", "-c", "python start_api.py --port 8018 --host 0.0.0.0 --openai_base_url ${OPENAI_BASE_URL} --openai_key ${OPENAI_KEY}"]

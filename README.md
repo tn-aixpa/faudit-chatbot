@@ -1,19 +1,18 @@
 # Chatbot API
 
 > [!IMPORTANT]  
-> To use the API you need a kubeai server running.
+> To use the API you need a OpenAI-compatible server running.
 
-Before creating the docker change the `--kubeai_host` in the `Dockerfile`. Then run:
+To build image run:
 
 ```docker build -t aixpa-chatbot-api .``` 
 
-Default port for the server is 8018, can be changed in the Dockerfile
+Default port for the server is 8018, can be changed in the Dockerfile.
 
-```docker run -p 8018:8018  aixpa-chatbot-api```
 
-To ensure everyting is working run 
+To ensure everyting is working locally, run 
 
-`python test_api.py --host 0.0.0.0 --port 8018`
+`python test_api.py --host 0.0.0.0 --port 8018 --openai_base_url=http://localhost:1235/v1`
 
 The espected result is:
 
@@ -22,6 +21,11 @@ The espected result is:
 > Testing next turn generation...........**PASSED** <br>
 > Testing next turn stream.................**PASSED**
 
+To run docker use the following command:
+
+```docker run -p 8018:8018 -e OPENAI_BASE_URL=http://localhost:1235/v1 -e OPENAI_KEY=123 aixpa-chatbot-api```
+
+with appropriate values for model endpoint and api key.
 
 # Endpoints
 

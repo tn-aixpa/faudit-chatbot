@@ -64,14 +64,14 @@ def create_chat_prompt (documents_list, dialogue_list, user, tone, chatbot_is_fi
     return chatbot_prompt_list
 
 def stream_answer(documents_list, dialogue_list, user, tone, chatbot_is_first):
-    from start_api import start_api_kubeai_host
+    from start_api import start_api_openai_base_url, start_api_openai_key
     
     chatbot_prompt_list = create_chat_prompt (documents_list, dialogue_list, user, tone, chatbot_is_first)
 
    
     client = OpenAI(
-        base_url = start_api_kubeai_host,
-        api_key='ollama', # required, but unused
+        base_url = start_api_openai_base_url,
+        api_key=start_api_openai_key
     )
 
     
@@ -93,13 +93,13 @@ def stream_answer(documents_list, dialogue_list, user, tone, chatbot_is_first):
 
 
 def generate_answer(documents_list, dialogue_list, user, tone, chatbot_is_first):
-    from start_api import start_api_kubeai_host
+    from start_api import start_api_openai_base_url, start_api_openai_key
     
     chatbot_prompt_list = create_chat_prompt (documents_list, dialogue_list, user, tone, chatbot_is_first)
     
     client = OpenAI(
-        base_url = start_api_kubeai_host,
-        api_key='ollama', # required, but unused
+        base_url = start_api_openai_base_url,
+        api_key=start_api_openai_key
     )
 
     # Generate next turn

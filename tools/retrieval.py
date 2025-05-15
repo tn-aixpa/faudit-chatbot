@@ -231,9 +231,9 @@ class Embedder_BGE_m3_kubeai:
         self.client = self.set_model()
 
     def set_model(self):
-        from start_api import start_api_kubeai_host
+        from start_api import start_api_openai_key, start_api_openai_base_url
         if self.name == 'bge-m3':
-            client = OpenAI(api_key="ignored", base_url=start_api_kubeai_host) 
+            client = OpenAI(api_key=start_api_openai_key, base_url=start_api_openai_base_url) 
         else:
             print("RetrieverModule Error: Select a valid retriever.")
             client = None

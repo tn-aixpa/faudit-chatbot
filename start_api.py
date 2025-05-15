@@ -15,11 +15,14 @@ from fastapi.middleware.cors import CORSMiddleware
 parser = argparse.ArgumentParser()
 parser.add_argument('--host', default="0.0.0.0")
 parser.add_argument('--port', default=8018, type=int)
-parser.add_argument('--kubeai_host', default='http://localhost:1235/v1')
+parser.add_argument('--openai_base_url', default='http://localhost:1235/v1')
+parser.add_argument('--openai_key', default='')
 args = parser.parse_args()
 
-start_api_kubeai_host = args.kubeai_host
+start_api_openai_base_url = args.openai_base_url
+start_api_openai_key = args.openai_key
 
+print("start_api_openai_base_url", start_api_openai_base_url)
 
 # instantiate FastApi application
 app = FastAPI(version="0.0.1")
