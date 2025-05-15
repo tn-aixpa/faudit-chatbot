@@ -17,10 +17,12 @@ parser.add_argument('--host', default="0.0.0.0")
 parser.add_argument('--port', default=8018, type=int)
 parser.add_argument('--openai_base_url', default='http://localhost:1235/v1')
 parser.add_argument('--openai_key', default='')
+parser.add_argument('--openai_model', default='aixpa')
 args = parser.parse_args()
 
 start_api_openai_base_url = args.openai_base_url
 start_api_openai_key = args.openai_key
+start_api_openai_model = args.openai_model
 
 print("start_api_openai_base_url", start_api_openai_base_url)
 

@@ -1,7 +1,11 @@
 # Chatbot API
 
 > [!IMPORTANT]  
-> To use the API you need a OpenAI-compatible server running.
+> To use the API you need a OpenAI-compatible server running. The parameters of the server are defined by
+> 
+> - ``openai_base_url`` parameter (``OPENAI_BASE_URL`` env variable): endpoint of the server
+> - ``openai_key`` parameter (``OPENAI_KEY`` env variable): API key for the server (may be empty string)
+> - ``openai_model`` parameter (``OPENAI_MODEL`` env variable): name of the model to call (defaults to 'aixpa')
 
 To build image run:
 
@@ -23,7 +27,7 @@ The espected result is:
 
 To run docker use the following command:
 
-```docker run -p 8018:8018 -e OPENAI_BASE_URL=http://localhost:1235/v1 -e OPENAI_KEY=123 aixpa-chatbot-api```
+```docker run -p 8018:8018 -e OPENAI_BASE_URL=http://localhost:1235/v1 -e OPENAI_KEY=123 -e OPENAI_MODEL=aixpa aixpa-chatbot-api```
 
 with appropriate values for model endpoint and api key.
 

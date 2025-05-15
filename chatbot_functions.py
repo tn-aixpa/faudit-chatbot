@@ -64,7 +64,7 @@ def create_chat_prompt (documents_list, dialogue_list, user, tone, chatbot_is_fi
     return chatbot_prompt_list
 
 def stream_answer(documents_list, dialogue_list, user, tone, chatbot_is_first):
-    from start_api import start_api_openai_base_url, start_api_openai_key
+    from start_api import start_api_openai_base_url, start_api_openai_key, start_api_openai_model
     
     chatbot_prompt_list = create_chat_prompt (documents_list, dialogue_list, user, tone, chatbot_is_first)
 
@@ -77,7 +77,7 @@ def stream_answer(documents_list, dialogue_list, user, tone, chatbot_is_first):
     
     # Generate next turn
     stream = client.chat.completions.create(
-        model="aixpa",
+        model=start_api_openai_model,
         messages=chatbot_prompt_list,
         temperature=0.6,
         stream=True
@@ -93,7 +93,7 @@ def stream_answer(documents_list, dialogue_list, user, tone, chatbot_is_first):
 
 
 def generate_answer(documents_list, dialogue_list, user, tone, chatbot_is_first):
-    from start_api import start_api_openai_base_url, start_api_openai_key
+    from start_api import start_api_openai_base_url, start_api_openai_key, start_api_openai_model
     
     chatbot_prompt_list = create_chat_prompt (documents_list, dialogue_list, user, tone, chatbot_is_first)
     
@@ -104,7 +104,7 @@ def generate_answer(documents_list, dialogue_list, user, tone, chatbot_is_first)
 
     # Generate next turn
     message = client.chat.completions.create(
-        model="aixpa",
+        model=start_api_openai_model,
         messages=chatbot_prompt_list,
         temperature=0.6,
         # max_completion_tokens=1000
