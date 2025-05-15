@@ -25,7 +25,7 @@ args = parser.parse_args()
 start_api_openai_base_url = args.openai_base_url
 start_api_openai_key = args.openai_key
 start_api_openai_model = args.openai_model
-start_api_mock = args.mock
+start_api_mock = args.mock or os.environ.get("MOCK", False).lower() == "true"
 
 print("start_api_openai_base_url", start_api_openai_base_url)
 print("start_api_mock", start_api_mock)
