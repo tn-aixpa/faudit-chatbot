@@ -1,9 +1,13 @@
-fastapi
-uvicorn
-llama-index == 0.10.28
-llama-index-retrievers-bm25
-split
-wtpsplit
-rank_bm25
-jprint
-torch
+fastapi==0.115.12
+uvicorn==0.33.0
+torch==2.4.1
+openai==1.78.1
+llama-index==0.10.28
+llama-index-retrievers-bm25==0.2.2
+split==0.4
+wtpsplit==2.1.5
+rank-bm25==0.2.2
+jprint==1.6
+
+
+
