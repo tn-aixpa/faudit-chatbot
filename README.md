@@ -4,7 +4,7 @@
 > To use the API you need a OpenAI-compatible server running. The parameters of the server are defined by
 > 
 > - ``openai_base_url`` parameter (``OPENAI_BASE_URL`` env variable): endpoint of the server
-> - ``openai_key`` parameter (``OPENAI_KEY`` env variable): API key for the server (may be empty string)
+> - ``openai_key`` parameter (``OPENAI_KEY`` env variable): API key for the server (may not be empty string)
 > - ``openai_model`` parameter (``OPENAI_MODEL`` env variable): name of the model to call (defaults to 'aixpa')
 
 To build image run:
@@ -13,10 +13,18 @@ To build image run:
 
 Default port for the server is 8018, can be changed in the Dockerfile.
 
+To run locally
+
+`python start_api.py --host 0.0.0.0 --port 8018 --openai_base_url=http://localhost:1235/v1 --openai_key=123 --openai_model=aixpa`
+
+To run locally as mock API
+
+`python start_api.py --host 0.0.0.0 --port 8018 --mock`
+
 
 To ensure everyting is working locally, run 
 
-`python test_api.py --host 0.0.0.0 --port 8018 --openai_base_url=http://localhost:1235/v1`
+`python test_api.py --host 0.0.0.0 --port 8018`
 
 The espected result is:
 
