@@ -1,0 +1,33 @@
+ai: NLP
+domain: PA
+usages: ./docs/usage.md
+metadata:
+  name: FamilyAudit-Chatbot
+  description: >
+    A Chatbot API that relies on fine-tuned LLM for supporting multi-dialog RAG for constructing Family Audit plans.
+  kind: product
+  ai: NLP
+  domain: PA
+  license: Apache License 2.0
+usage:
+  target_users:
+    - PA operators (municipalities, regional operators, etc.)
+  applications:
+    - interactive chatbot API for constructing Family Audit plans
+  documentation_links:
+    - usage: ./docs/usage.md
+howto:
+  - title: Deploy, expose, and test the chatbot API in production mode
+    ref: ./docs/howto/deploy.md
+  - title: Deploy, expose, the chatbot API in mock mode (without LLM)
+    ref: ./docs/howto/deploymock.md
+deployments:
+  - id: chatbot-api
+    name: Expose the classifed model as a custom API
+    kind: service
+    implementation:
+      framework: aixpa
+      spec:
+        kind: container 
+        code_src: "git+https://github.com/tn-aixpa/faudit-chatbot" 
+        image: "ghcr.io/tn-aixpa/faudit-chatbot:latest"
