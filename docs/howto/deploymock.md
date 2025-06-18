@@ -1,8 +1,8 @@
 # How to deploy, expose, the chatbot API in mock mode (without LLM)
 
-The chatbot API may be deployed without the underlying LLM (mock mode). 
+The chatbot API may be deployed without the underlying LLM (mock mode).
 
-## Deploy the service 
+## Deploy the service
 
 1. Initialize the AIxPA project to host the service.
 
@@ -14,7 +14,7 @@ project = dh.get_or_create_project("faudit-classifier")
 2. Define the service function with the container runtime.
 
 ```python
-chatbot_function = project.new_function(name="chatbot", kind="container", image="ghcr.io/tn-aixpa/faudit-chatbot:0.1.3")
+chatbot_function = project.new_function(name="chatbot", kind="container", image="ghcr.io/tn-aixpa/faudit-chatbot:0.1.4")
 ```
 
 3. Deploy the service running the function a
@@ -23,7 +23,7 @@ chatbot_function = project.new_function(name="chatbot", kind="container", image=
 chatbot_run = chatbot_function.run(action="serve", args=["--mock"], service_type="NodePort", service_ports=[{"port": 8018, "target_port": 8018}])
 ```
 
-Here ``mock`` argument is used to specify that the execution is performed in mock mode.
+Here `mock` argument is used to specify that the execution is performed in mock mode.
 
 Once deployed, the internal service endpoint may be recovered as follows:
 
@@ -31,7 +31,7 @@ Once deployed, the internal service endpoint may be recovered as follows:
 service_url = chatbot_run.refresh().status.service["url"]
 ```
 
-## Test the functionality 
+## Test the functionality
 
 F1. Setup the example documents to use for the scenario.
 
@@ -73,7 +73,7 @@ print(message)
 
 ```python
 request_ground = {
-    "documents_list": documents,    
+    "documents_list": documents,
     "query": message,
     "options_number": 3
 }
