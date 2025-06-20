@@ -58,7 +58,7 @@ To deploy the model in AIxPA platform, use the ``kubeai`` runtime. Specifically,
 
 ```python
 llm_function = project.new_function("famigliallm",
-                                    kind="kubeai",
+                                    kind="kubeai-text",
                                     model_name="llama-3.1",
                                     url="hf://unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit",
                                     engine="VLLM",
