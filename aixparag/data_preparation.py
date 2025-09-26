@@ -184,6 +184,7 @@ def chunking(data_dict, metadata=False):
 
 def extract_metadata(doclist):
     print("Extracting metadata from documents...")
+    os.makedirs("aixparag/data", exist_ok=True)
     # getting documents
     data = collections.defaultdict(lambda : 'Key Not Found')
     # for el in dialog_documents:
