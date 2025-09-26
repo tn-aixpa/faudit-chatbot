@@ -9,17 +9,30 @@ import random
 from openai import OpenAI
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
+from aixparag.RAGmain import rag_answer,rag_answer_highlight
+
 
 def create_chat_prompt (documents_list, dialogue_list, user, tone, chatbot_is_first):
     
     dial= dialogue.Dialogue(turns = dialogue_list)
 
     # Make Prompt
+    # prompt = '''You are an helpful assistant from the public administration, use a <<TONE>> tone.
+    # The user is a <<ROLE>>.
+    # Your task is to provide a relevant answer to the user using the provided evidence and past dialogue history.
+    # The evidence is contained in <document> tags.Be proactive asking for the information needed to help the user.
+    # When you receive a question, answer by referring exclusively to the content of the document.
+    # Answer in Italian.
+    # <document><<DOCUMENTS>></document>'''
+
     prompt = '''You are an helpful assistant from the public administration, use a <<TONE>> tone.
     The user is a <<ROLE>>.
     Your task is to provide a relevant answer to the user using the provided evidence and past dialogue history.
     The evidence is contained in <document> tags.Be proactive asking for the information needed to help the user.
-    When you receive a question, answer by referring exclusively to the content of the document.
+    When you receive a question, answer by referring exclusively to the content of the document. 
+    If you need more information to fullfill the user request, ask the user a specific question to clarify what they need brfore asking.
+    Ask for every information you need to write an action or a plan when the user request you to do it
+    Avoid repetitions and repeating the same information in different ways.
     Answer in Italian.
     <document><<DOCUMENTS>></document>'''
 
@@ -118,6 +131,85 @@ def generate_answer(documents_list, dialogue_list, user, tone, chatbot_is_first)
     return next_turn
 
 
+def stream_answer_rag(documents_list, dialogue_list, user, tone, chatbot_is_first, hf_token):
+    from start_api import start_api_openai_base_url, start_api_openai_key, start_api_openai_model
+    
+    output_rag = get_ground_rag(documents_list, dialogue_list, 5, hf_token, chatbot_is_first) #the number of item (5) do nothing
+    ground_rag = []
+    for g in output_rag:
+        ground_rag.append(g["text"])
+    # print("---------------------------------")
+    # print("---------------------------------")
+    # print("GROUND RAG", ground_rag)
+    # print("---------------------------------")
+    # print("---------------------------------")
+
+    chatbot_prompt_list = create_chat_prompt(ground_rag, dialogue_list, user, tone, chatbot_is_first)
+   
+    client = OpenAI(
+        base_url = start_api_openai_base_url,
+        api_key=start_api_openai_key
+    )
+
+    
+    # Generate next turn
+    stream = client.chat.completions.create(
+        # model="c320",
+        # model="aixpa-new-ground",
+        model = start_api_openai_model,
+        messages=chatbot_prompt_list,
+        temperature=0.6,
+        stream=True
+    )  
+    
+    async def event_generator():
+        for chunk in stream:
+            content = chunk.choices[0].delta.content
+            if content:
+                yield content
+
+    return StreamingResponse(event_generator(), media_type="application/json")
+
+
+def generate_answer_rag(documents_list, dialogue_list, user, tone, chatbot_is_first, hf_token):
+    from start_api import start_api_openai_base_url, start_api_openai_key, start_api_openai_model
+    
+    output_rag = get_ground_rag(documents_list, dialogue_list, 5, hf_token, chatbot_is_first) #the number of item (5) do nothing
+    ground_rag = []
+    for g in output_rag:
+        ground_rag.append(g["text"])
+    # print("---------------------------------")
+    # print("---------------------------------")
+    # print("GROUND RAG", ground_rag)
+    # print("---------------------------------")
+    # print("---------------------------------")
+
+    chatbot_prompt_list = create_chat_prompt(ground_rag, dialogue_list, user, tone, chatbot_is_first)
+    
+    client = OpenAI(
+        base_url = start_api_openai_base_url,
+        api_key=start_api_openai_key
+    )
+
+    # Generate next turn
+    message = client.chat.completions.create(
+        # model="c320",
+        # model="aixpa-new-ground",
+        model = start_api_openai_model,
+        # model="mask048",
+        # model="aixpa",
+        messages=chatbot_prompt_list,
+        temperature=0.6,
+        # max_completion_tokens=1000
+    ).choices[0].message.content
+
+    
+    next_turn = {
+            "turn_text": message,                
+        }        
+    
+    return next_turn
+
 
 
 def get_ground(documents_list, query, options_number):
@@ -151,6 +243,76 @@ def get_ground(documents_list, query, options_number):
         ground_info["offset_end"] = index_end
         grounds_list.append(ground_info)
         
+        
+    return grounds_list
+
+
+def get_ground_highlight(documents_list, query, options_number, hf_token):
+
+    retrieved_chunks = rag_answer_highlight(documents_list,query, options_number, hf_token)
+
+    grounds_list = [] 
+
+    print("retrieved_chunks LIST")
+    print(retrieved_chunks)
+
+    for chunk in retrieved_chunks:
+        chunk = chunk.strip()
+        if chunk.startswith("COMUNE"):
+            chunk_clean =  chunk.split("\n", 1)[1] if "\n" in chunk else ""
+        else:
+            chunk_clean = chunk
+        
+        for i, doc in enumerate(documents_list):
+            index_start, index_end = span.find_indexes(documents_list[i], chunk_clean)
+
+            # Only add if indexes are valid
+            if index_start is not None and index_end is not None:
+                ground_info = {
+                    "text": chunk_clean,
+                    "file_index": i,
+                    "offset_start": index_start,
+                    "offset_end": index_end
+                }
+                grounds_list.append(ground_info)
+
+    return grounds_list
+
+
+def get_ground_rag(documents_list, dialogue_list, options_number, hf_token, chatbot_is_first):
+    
+    query = dialogue_list[-1]['turn_text']
+    
+    retrieved_chunks = rag_answer(documents_list, dialogue_list, query, options_number, hf_token, chatbot_is_first)
+    print("RAG ANSWER", retrieved_chunks)
+    
+    grounds_list = [] 
+
+    # print("DOCUMENTS LIST")
+    # print(documents_list)
+
+    for chunk in retrieved_chunks:
+        
+        if chunk.startswith("COMUNE"):
+            chunk_clean =  chunk.split("\n", 1)[1] if "\n" in chunk else ""
+        else:
+            chunk_clean = chunk
+        
+        for i, doc in enumerate(documents_list):
+            index_start, index_end = span.find_indexes(documents_list[i], chunk_clean)
+
+            # Only add if indexes are valid
+            if index_start is not None and index_end is not None:
+                ground_info = {
+                    "text": chunk,
+                    "file_index": i,
+                    "offset_start": index_start,
+                    "offset_end": index_end
+                }
+                grounds_list.append(ground_info)
+
+    print(grounds_list)    
+
     return grounds_list
 
 
