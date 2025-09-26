@@ -1,0 +1,5 @@
+# This file stores global objects
+_GLOBAL_RERANKERS = {}
+_GLOBAL_AMBITI = {}
+_GLOBAL_TASSONOMIE = {}
+_GLOBAL_EMBEDDINGS = {}

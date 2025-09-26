@@ -1,0 +1,9 @@
+vector_store.pkl 
+aixpa_venv/
+test.py
+guidance_test.py
+.DS_Store
+__pycache__/
+vector_store/
+local_qdrant_data/
+data/
