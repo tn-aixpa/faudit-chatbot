@@ -78,12 +78,13 @@ class VLLMModel:
         Ensure this environment variable is set before running the code.
         """
 
-        from start_api import start_api_openai_base_url
+        from start_api import start_api_openai_base_url, start_api_openai_base_model
         self.client = OpenAI(
         base_url = start_api_openai_base_url,
         # base_url = "http://localhost:1234/v1", # local vLLM endpoint
         api_key='ollama', # required, but unused
         )
+        self.model_name = start_api_openai_base_model
 
     def generate(self, sys_prompt: str, conversation: list, max_new_tokens: int = 500, temperature: float = 0.9) -> str:
         if not conversation:
@@ -98,7 +99,7 @@ class VLLMModel:
         try:
             # Apply the chat template and tokenize the input
             message = self.client.chat.completions.create(
-            model="llama31",
+            model=self.model_name,
             messages=messages,
             temperature=temperature,
             max_completion_tokens=max_new_tokens
@@ -121,7 +122,7 @@ class VLLMModel:
 
         try:
             message = self.client.chat.completions.create(
-            model="llama31",
+            model=self.model_name,
             messages=messages,
             temperature=temperature,
             max_completion_tokens=max_new_tokens,

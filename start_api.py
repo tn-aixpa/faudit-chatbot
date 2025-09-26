@@ -23,6 +23,7 @@ parser.add_argument('--port', default=8018, type=int)
 parser.add_argument('--openai_base_url', default='http://localhost:1235/v1')
 parser.add_argument('--openai_key', default='ignore')
 parser.add_argument('--openai_model', default='aixpa')
+parser.add_argument('--openai_base_model', default='llama31')
 parser.add_argument('--mock', action='store_true')
 parser.add_argument('--data_artifact', default=None)
 args = parser.parse_args()
@@ -30,6 +31,7 @@ args = parser.parse_args()
 start_api_openai_base_url = args.openai_base_url
 start_api_openai_key = args.openai_key
 start_api_openai_model = args.openai_model
+start_api_openai_base_model = args.openai_base_model
 start_api_mock = args.mock or os.environ.get("MOCK", "False").lower() == "true"
 hf_token = os.environ.get("HF_TOKEN", "")
 
