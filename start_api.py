@@ -27,6 +27,7 @@ parser.add_argument('--openai_base_model', default='llama31')
 parser.add_argument('--mock', action='store_true')
 parser.add_argument('--data_artifact', default=None)
 parser.add_argument('--storage_artifact', default=None)
+parser.add_argument('--prepare_data', action='store_true')
 args = parser.parse_args()
 
 start_api_openai_base_url = args.openai_base_url
@@ -171,4 +172,9 @@ def dialogue_generation_dynamic(request: TurnGroundRequestRAG):
 
 if __name__ == '__main__':
     init_app()
-    uvicorn.run("start_api:app", host=args.host, port=args.port, workers=1)
+    prepare_data = args.prepare_data or os.environ.get("PREPARE_DATA", "False").lower() == "true"
+    if prepare_data:
+        project = dh.get_or_create_project(os.environ.get("PROJECT_NAME"))
+        art = project.log_artifact("rag_storage", kind="artifact", source="./aixparag/data")
+    else:
+        uvicorn.run("start_api:app", host=args.host, port=args.port, workers=1)
