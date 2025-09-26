@@ -78,24 +78,6 @@ def get_similarity(list1, list2):
                 similar_items.append(or_el)
     return list(set(similar_items))
 
-# def exctract_metadata(model, query, conversation, tassonomie, ambiti):
-#     tassonomie_text = "\n".join([f"- {el}" for el in tassonomie])
-#     ambiti_text = "\n".join([f"- {el}" for el in ambiti])
-#     user_prompt = prompts.METADATA_USER_2.format(tassonomie = tassonomie_text,
-#                                                 macro_ambiti = ambiti_text,
-#                                                 conversation = conversation)
-
-#     response = model.generate(prompts.METADATA_SYS, [user_prompt])
-
-#     response_dict = extract_and_parse_json(response) 
-#     print(f"RESPONSE DICT:\n{response_dict}\n=============")
-#     proc_response_dict = {
-#         'tassonomia' : get_similarity(response_dict['tassonomia'], tassonomie),
-#         'macro_ambito' : get_similarity(response_dict['macro_ambito'], ambiti),
-#         'place' : [el.lower() for el in response_dict['luogo'] if el!=None]
-#     }
-#     return proc_response_dict 
-
 def exctract_metadata(model, query, conversation, tassonomie, ambiti, luoghi):
     tassonomie_text = "\n".join([f"- {el}" for el in tassonomie])
     ambiti_text = "\n".join([f"- {el}" for el in ambiti])
@@ -146,55 +128,16 @@ def expand_query(model, conversation: list) -> str:
     if not conversation:
         return "Error: The conversation list cannot be empty."
 
-    # Last user message
-    # last_turn = conversation[-1]["turn_text"]
-    # context_turns = conversation[:-1]
+   
     last_turn = conversation[-1]
     context_turns = conversation[:-1]
-
-    # Prepare conversation list for the generate function
-    # conv_texts = [
-    #     f"{turn['speaker']}: {turn['turn_text']}" for turn in context_turns
-    # ] + [f"operatore: {last_turn}"]
-
-    # System prompt for rewriting
-    # sys_prompt = (
-    #     "You are a helpful assistant that rewrites the last user message to be "
-    #     "fully self-contained. Use the context from the previous conversation if needed to expand the request of the user, "
-    #     "but do not add details that are not implied. Only expand the query, dont give any answer to the user request. Return only the rewritten query."
-    # )
 
     sys_prompt = prompts.QUERY_RWR_SYS
     user_prompt = prompts.QUERY_RWR_USER.format(conversation=context_turns,
                                                 query=last_turn)
     
-    ### EXAMPLE
-    # user_1 = prompts.QUERY_RWR_USER.format(conversation=['Buongiorno come posso aiutare?', 'Quali azioni ha intrapreso il comune di Brentonico per lo sport?'],
-    #                                        query='Quali azioni ha intrapreso il comune di Brentonico per lo sport?')
-    
-    # assistant_1 = "<REWRITTEN_QUERY>\nCosa propone il comune di Arco per i nuovi nati?\n</REWRITTEN_QUERY>"
 
-    # user_1 = prompts.QUERY_RWR_USER.format(conversation=['Buongiorno come posso aiutare?', "vorrei inserire nel mio piano comunale un'azione sullo sport, mi puoi suggerire qualcosa?", 'Puoi inserire un\'azione di tipo "Promozione strumenti ACS (Family Audit, Family in Trentino, Network nazionale, Distretto Famiglia,           EuregioFamilyPass, Family in Italia)"', 'Ci sono azioni del comune di Arco in merito?'],
-    #                                        query='Esistono azioni del comune di Arco sullo sport?')
-    
-    # assistant_1 = "<REWRITTEN_QUERY>\nCosa propone il comune di Arco per i nuovi nati?\n</REWRITTEN_QUERY>"
-
-    # user_2 = prompts.QUERY_RWR_USER.format(conversation=['Buongiorno come posso aiutare?', 'cosa propone il comune di Arco per i nuovi nati?', "Il Comune di Arco ha predisposto un kit di benvenuto per i nuovi nati, che comprende una lettera di benvenuto e un pieghevole che illustra le principali agevolazioni e opportunità per le famiglie residenti"],
-    #                                        query='e per quanto riguarda Ala?')
-    
-    # assistant_2 = "<REWRITTEN_QUERY>\nCosa propone il comune di Ala per i nuovi nati?\n</REWRITTEN_QUERY>"
-    
-
-    
-    # messages = [user_1, assistant_1, user_2, assistant_2, user_prompt]
     messages = [user_prompt]
-
-    print("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
-    print("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
-    print("SYSTEM PROMPT:\n", sys_prompt)
-    print("USER PROMPT:\n", user_prompt)
-    print("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
-    print("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
     try:
         # Call the VLLMModel's generate function
         rewritten_query = model.generate(

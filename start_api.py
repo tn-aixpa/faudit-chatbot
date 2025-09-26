@@ -12,7 +12,7 @@ from pydantic import BaseModel
 from aixparag import RAGmain
 from aixparag.data_preparation import extract_metadata
 from aixparag.Retriever import Retriever
-from aixparag.global_cache import _GLOBAL_RERANKERS 
+from aixparag.global_cache import _GLOBAL_RERANKERS
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import digitalhub as dh
@@ -26,6 +26,7 @@ parser.add_argument('--openai_model', default='aixpa')
 parser.add_argument('--openai_base_model', default='llama31')
 parser.add_argument('--mock', action='store_true')
 parser.add_argument('--data_artifact', default=None)
+parser.add_argument('--storage_artifact', default=None)
 args = parser.parse_args()
 
 start_api_openai_base_url = args.openai_base_url
@@ -34,9 +35,6 @@ start_api_openai_model = args.openai_model
 start_api_openai_base_model = args.openai_base_model
 start_api_mock = args.mock or os.environ.get("MOCK", "False").lower() == "true"
 hf_token = os.environ.get("HF_TOKEN", "")
-
-print("start_api_openai_base_url", start_api_openai_base_url)
-print("start_api_mock", start_api_mock)
 
 # aixpa-new-ground
 
@@ -75,23 +73,32 @@ def read_txt_files(folder_path):
                 contents.append(f.read())
     return contents
 
-start_time = time.time()
+def init_app():
+    start_time = time.time()
+    print(start_time, "Data Creation RAG")
+    print("start_api_openai_base_url", start_api_openai_base_url)
+    print("start_api_mock", start_api_mock)
 
-if not start_api_mock and args.data_artifact is not None:
-    project = dh.get_or_create_project(os.environ.get("PROJECT_NAME"))
-    project.get_artifact(args.data_artifact).download("RAG_documents", overwrite=True)
+    if not start_api_mock:
 
-print(start_time, "Data Creation RAG")
-if not start_api_mock:
-    documents_list = read_txt_files("RAG_documents")
-    print("Loaded " + str(len(documents_list)) + " documents")
-    extract_metadata(documents_list)
-    my_vector_store = RAGmain.create_vector_store()
+        if args.data_artifact is not None:
+            project = dh.get_or_create_project(os.environ.get("PROJECT_NAME"))
+            project.get_artifact(args.data_artifact).download("RAG_documents", overwrite=True)
 
-    Retriever(vector_store=my_vector_store, reranker_model_name=_GLOBAL_RERANKERS["reranker_hf_model"])
-    print(_GLOBAL_RERANKERS["reranker_hf_model"])
+        if args.storage_artifact is not None:
+            project = dh.get_or_create_project(os.environ.get("PROJECT_NAME"))
+            project.get_artifact(args.storage_artifact).download("aixparag/data", overwrite=True)
 
+        if not os.path.exists("aixparag/data/vector_store.pkl"):
+            documents_list = read_txt_files("RAG_documents")
+            print("Loaded " + str(len(documents_list)) + " documents")
+            extract_metadata(documents_list)
+            my_vector_store = RAGmain.create_vector_store()
 
+            Retriever(vector_store=my_vector_store, reranker_model_name=_GLOBAL_RERANKERS["reranker_hf_model"])
+            print(_GLOBAL_RERANKERS["reranker_hf_model"])
+        
+        RAGmain.load_vector_store()
 
 
 @app.get('/')
@@ -163,5 +170,5 @@ def dialogue_generation_dynamic(request: TurnGroundRequestRAG):
 
 
 if __name__ == '__main__':
-
+    init_app()
     uvicorn.run("start_api:app", host=args.host, port=args.port, workers=1)
