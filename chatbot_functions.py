@@ -10,6 +10,7 @@ from openai import OpenAI
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from aixparag.RAGmain import rag_answer,rag_answer_highlight
+import datetime
 
 
 def create_chat_prompt (documents_list, dialogue_list, user, tone, chatbot_is_first):
@@ -175,22 +176,18 @@ def generate_answer_rag(documents_list, dialogue_list, user, tone, chatbot_is_fi
     from start_api import start_api_openai_base_url, start_api_openai_key, start_api_openai_model
     
     output_rag = get_ground_rag(documents_list, dialogue_list, 5, hf_token, chatbot_is_first) #the number of item (5) do nothing
+
     ground_rag = []
     for g in output_rag:
         ground_rag.append(g["text"])
-    # print("---------------------------------")
-    # print("---------------------------------")
-    # print("GROUND RAG", ground_rag)
-    # print("---------------------------------")
-    # print("---------------------------------")
 
     chatbot_prompt_list = create_chat_prompt(ground_rag, dialogue_list, user, tone, chatbot_is_first)
     
+    # start = datetime.datetime.now().timestamp()
     client = OpenAI(
         base_url = start_api_openai_base_url,
         api_key=start_api_openai_key
     )
-
     # Generate next turn
     message = client.chat.completions.create(
         # model="c320",
@@ -202,6 +199,8 @@ def generate_answer_rag(documents_list, dialogue_list, user, tone, chatbot_is_fi
         temperature=0.6,
         # max_completion_tokens=1000
     ).choices[0].message.content
+    # end = datetime.datetime.now().timestamp()
+    # print("GENERATE", (end - start))
 
     
     next_turn = {
@@ -284,7 +283,6 @@ def get_ground_rag(documents_list, dialogue_list, options_number, hf_token, chat
     query = dialogue_list[-1]['turn_text']
     
     retrieved_chunks = rag_answer(documents_list, dialogue_list, query, options_number, hf_token, chatbot_is_first)
-    print("RAG ANSWER", retrieved_chunks)
     
     grounds_list = [] 
 
@@ -310,8 +308,6 @@ def get_ground_rag(documents_list, dialogue_list, options_number, hf_token, chat
                     "offset_end": index_end
                 }
                 grounds_list.append(ground_info)
-
-    print(grounds_list)    
 
     return grounds_list
 

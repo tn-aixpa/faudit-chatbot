@@ -78,11 +78,11 @@ class VLLMModel:
         Ensure this environment variable is set before running the code.
         """
 
-        from start_api import start_api_openai_base_url, start_api_openai_base_model
+        from start_api import start_api_openai_base_url, start_api_openai_base_model, start_api_openai_key
         self.client = OpenAI(
         base_url = start_api_openai_base_url,
         # base_url = "http://localhost:1234/v1", # local vLLM endpoint
-        api_key='ollama', # required, but unused
+        api_key=start_api_openai_key, # required, but unused
         )
         self.model_name = start_api_openai_base_model
 

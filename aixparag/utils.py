@@ -96,7 +96,6 @@ def exctract_metadata(model, query, conversation, tassonomie, ambiti, luoghi):
                                                 conversation = conv)
     
     response = model.generate_json(prompts.METADATA_SYS, [user_prompt], temperature=0.9, max_new_tokens=500)
-    print(f"USER PROMPT:\n{user_prompt}\n=============")
     # postprocessing json
     loaded_json = json.loads(response)
     if 'tassonomia' in loaded_json and len(loaded_json['tassonomia']) > 0:
@@ -108,7 +107,6 @@ def exctract_metadata(model, query, conversation, tassonomie, ambiti, luoghi):
     if 'luogo' in loaded_json and len(loaded_json['luogo']) > 0:
         if loaded_json['luogo'][0] != None:
             loaded_json['luogo'] = [el.lower() for el in loaded_json['luogo']]
-    print(f"RESPONSE DICT:\n{loaded_json}\n=============")
     return loaded_json 
 
 

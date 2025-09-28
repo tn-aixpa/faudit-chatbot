@@ -6,7 +6,6 @@ from .global_cache import _GLOBAL_RERANKERS  # import the global cache
 import statistics
 from typing import Tuple
 
-
 class Retriever:
     """
     A class to handle document retrieval and optional re-ranking for RAG applications.
@@ -43,7 +42,6 @@ class Retriever:
                     _GLOBAL_RERANKERS[reranker_model_name] = None
 
             self.reranker = _GLOBAL_RERANKERS[reranker_model_name]
-            print("Reranker model loaded from cache.")
 
         # if reranker_model_name:
         #     print(f"Initializing reranker model: {reranker_model_name}...")
@@ -59,17 +57,17 @@ class Retriever:
         """
         Retrieves the top-k most relevant documents from the vector store.
         """
-        print(f"Retrieving initial top {k} documents for query: '{query}'")
-        print(f"Using filters: {filters}")
+        # print(f"Retrieving initial top {k} documents for query: '{query}'")
+        # print(f"Using filters: {filters}")
         
         # retrieved_docs = self.vector_store.search(query, k=k)
 
         retrieved_docs = self.vector_store.search(query, k=k, filters=filters)
         if len(retrieved_docs) == 0:
-            print("No documents retrieved from the vector store. Now running without filter.")
+            # print("No documents retrieved from the vector store. Now running without filter.")
             retrieved_docs = self.vector_store.search(query, k=k)
         
-        print(f"Found {len(retrieved_docs)} documents during initial retrieval.")
+        # print(f"Found {len(retrieved_docs)} documents during initial retrieval.")
         return retrieved_docs
 
     def rerank(self, query: str, documents: List[Dict], k: int = 5) -> List[Dict]:
@@ -93,7 +91,7 @@ class Retriever:
             print("No documents to rerank. Returning empty list.")
             return []
 
-        print(f"Re-ranking {len(documents)} documents for query: '{query}'")
+        # print(f"Re-ranking {len(documents)} documents for query: '{query}'")
         # Prepare pairs for the cross-encoder: (query, document_text)
         sentence_pairs = [[query, doc.page_content] for doc in documents]
 
@@ -112,7 +110,7 @@ class Retriever:
         # Sort by rerank_score in descending order (highest score first)
         reranked_docs.sort(key=lambda x: x['rerank_score'], reverse=True)
 
-        print("Documents re-ranked successfully.")
+        # print("Documents re-ranked successfully.")
         return reranked_docs[:k]
 
 

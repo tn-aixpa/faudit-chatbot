@@ -86,7 +86,7 @@ class VectorStore:
         """
         Performs a similarity search in the vector store.
         """
-        print(f"\nSearching for: '{query}' (k={k}) with filters: {filters}")
+        # print(f"\nSearching for: '{query}' (k={k}) with filters: {filters}")
         qdrant_filter = None
         if filters:
             should_conditions = []
@@ -123,63 +123,15 @@ class VectorStore:
                 k=k,
                 filter=qdrant_filter
             )
-            print(f"Found {len(results)} results.")
+            # print(f"Found {len(results)} results.")
             return results
         except Exception as e:
             print(f"Error during search: {e}")
             return []
 
-    # def search(self, query: str, k: int = 2, filters: Optional[Dict[str, Any]] = None) -> List[Document]:
-    #     """
-    #     Performs a similarity search in the vector store.
-    #     """
-    #     print(f"\nSearching for: '{query}' (k={k}) with filters: {filters}")
-    #     qdrant_filter = None
-    #     if filters:
-    #         should_conditions = []
-    #         for key, value in filters.items():
-    #             qdrant_key = f"metadata.{key}"
-    #             if value == None or len(value) == 0 or value[0] == 'None':
-    #                 continue
-    #             elif len(value) > 1:
-    #                 match = MatchAny(any=value)
-    #             else:
-    #                 match = MatchValue(value=value[0])
-    #             should_conditions.append(
-    #                 FieldCondition(
-    #                     key=qdrant_key,
-    #                     match=match
-    #                 )
-    #             )
-    #         qdrant_filter = Filter(should=should_conditions)
-
-    #     try:
-    #         results = self.vector_store.similarity_search(  
-    #             query=query,
-    #             k=k,
-    #             filter=qdrant_filter
-    #         )
-    #         print(f"Found {len(results)} results.")
-    #         return results
-    #     except Exception as e:
-    #         print(f"Error during search: {e}")
-    #         return []
-
 
     def db_select(self, filters=None, limit=5000):
         if filters != None:
-            # should_conditions = []
-            # for key, value in filters.items():
-            #     print(key)
-            #     print(value)
-            #     qdrant_key = f"metadata.{key}"
-            #     should_conditions.append(
-            #         FieldCondition(
-            #             key=qdrant_key,
-            #             match=MatchValue(value=value[0])
-            #         )
-            #     )
-            # qdrant_filter = Filter(should=should_conditions)
             should_conditions = []
             for key, value in filters.items():
                 qdrant_key = f"metadata.{key}"

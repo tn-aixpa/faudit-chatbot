@@ -70,15 +70,6 @@ def create_vector_store():
         documents.extend(actions)
     my_vector_store.populate_vector_store(documents)
     
-
-    # vector_store_config = {
-    #     "collection_name": my_vector_store.collection_name,
-    #     "model_name": "dbmdz/bert-base-italian-uncased",
-    # }
-    # with open("aixparag/vector_store_config.pkl", "wb") as f:
-    #     dill.dump(vector_store_config, f)
-
-    # return my_vector_store
     with open("aixparag/data/vector_store.pkl", "wb") as f:
         pickle.dump(my_vector_store, f)
 
@@ -124,57 +115,25 @@ def rag_answer(documents_list, dialogue_list, query, options_number, hf_token, c
 
     # planner_res = utils.planner(vllm_model, query, conversation)
     planner_res = "YES"
-    print("RESPONSE:", planner_res)
     if planner_res == "NO":
-        print("-- No RAG module needed --")
         retrieved_results = []
-        # reply = utils.no_rag_reply_hf(vllm_model, query, conversation)
-        # print(f"\n\n>>> ChatBot: {reply}\n\n")
-        # conversation.append(reply)
         return  retrieved_results   
     else:
-        print("-- RAG module activated --")
         # response_dict contains metadata extracted from the last turn (query)
         
         router = utils.sql_planner(vllm_model, query)
         if router == "DB_QUERY":
-            print("--> DB_QUERY")
             response_dict = utils.exctract_metadata(vllm_model, query, conversation, tassonomie, ambiti, luoghi)
-            print("response_dict:", response_dict)
             search_results = my_vector_store.db_select(filters=response_dict, limit=10)
-            # retrieved_results = []
-            # context ="\n\n".join([el.payload['page_content'] for el in search_results[0]])
             retrieved_results =[el.payload['page_content'] for el in search_results[0]]
-            # print("\n>>> EXTRATED ACTIONS <<<\n")
-            # for el in search_results:
-            #     retrieved_results.append(el)
-            # print("\n=======================\n")
-            # print("Context:", context)
-            # retrieved_results = search_results
-            # print("RETRIEVED RESULTS:", retrieved_results)
             return retrieved_results
 
         else:
-            print("--> SEMANTIC_SEARCH")
             response_dict = dict()
             response_dict['luogo'] =  luoghi
-            # response_dict['tassonomia'] = []
-            # response_dict['macro_ambito'] = []
-            print(response_dict)
             search_results = my_retriever.retrieve(query, k=15, filters=response_dict)
-            # search_results = my_retriever.retrieve(query, k=20)
             filtered_results = my_retriever.rerank(query, search_results, k=5)
-            # filtered_results, r_scores = my_retriever.rerank_scores(query, search_results, k=5)
-            
-            # retrieved_results = []
-            # context = "\n\n".join([el['page_content'] for el in filtered_results])
-            retrieved_results = [el['page_content'] for el in filtered_results]
-            # print("\n>>> EXTRATED ACTIONS <<<\n")
-            # for el in filtered_results:
-            #     retrieved_results.append(el['page_content'])
-            # print("\n=======================\n")
-            # retrieved_results = filtered_results
-            # print("RETRIEVED RESULTS:", retrieved_results)
+            retrieved_results = [el['page_content'] for el in filtered_result]
             return retrieved_results
 
 
@@ -182,7 +141,6 @@ def rag_answer(documents_list, dialogue_list, query, options_number, hf_token, c
 def rag_answer_highlight(documents_list, query, options_number, hf_token):
 
     my_vector_store = load_vector_store()
-    print("Vector store loaded.")
     
 
     luoghi = find_cities_in_first_lines(documents_list)
@@ -196,31 +154,9 @@ def rag_answer_highlight(documents_list, query, options_number, hf_token):
         if city in _GLOBAL_AMBITI and _GLOBAL_AMBITI[city]:
             ambiti_dialogo.extend(_GLOBAL_AMBITI[city])  
     
-    tassonomie = list(set(tassonomie_dialogo))
-    ambiti = list(set(ambiti_dialogo))
-
-    print("Cities found in the first lines of documents:", luoghi)
-    print()
-    print("Tassonomie found in the dialogue:", tassonomie)
-    print()
-    print("Ambiti found in the dialogue:", ambiti)  
-    print()
-
-    # my_retriever = Retriever(vector_store=my_vector_store, reranker_model_name='BAAI/bge-reranker-v2-m3')
-    # my_retriever = Retriever(vector_store=my_vector_store, reranker_model_name='nickprock/cross-encoder-italian-bert-stsb')
-    my_retriever = Retriever(vector_store=my_vector_store, reranker_model_name=_GLOBAL_RERANKERS["reranker_hf_model"])
-    
-
-    # login(hf_token)
-
-    print("Findin highlights for query:",query)
-    print("-- Highlights RAG module activated --  SEMANTIC_SEARCH")
-
+    my_retriever = Retriever(vector_store=my_vector_store, reranker_model_name=_GLOBAL_RERANKERS["reranker_hf_model"])    
     response_dict = dict()
     response_dict['luogo'] =  luoghi
-    # response_dict['tassonomia'] = []
-    # response_dict['macro_ambito'] = []
-    print(response_dict)    
     
     search_results = my_retriever.retrieve(query, k=20, filters=response_dict)
     
@@ -228,6 +164,4 @@ def rag_answer_highlight(documents_list, query, options_number, hf_token):
     
 
     retrieved_results = [el['page_content'] for el in filtered_results]
-
-    print("RETRIEVED RESULTS:", retrieved_results)
     return retrieved_results
