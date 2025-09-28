@@ -135,13 +135,12 @@ def rag_answer(documents_list, dialogue_list, query, options_number, hf_token, c
     else:
         print("-- RAG module activated --")
         # response_dict contains metadata extracted from the last turn (query)
-        response_dict = utils.exctract_metadata(vllm_model, query, conversation, tassonomie, ambiti, luoghi)
-        print("response_dict:", response_dict)
-        
         
         router = utils.sql_planner(vllm_model, query)
         if router == "DB_QUERY":
             print("--> DB_QUERY")
+            response_dict = utils.exctract_metadata(vllm_model, query, conversation, tassonomie, ambiti, luoghi)
+            print("response_dict:", response_dict)
             search_results = my_vector_store.db_select(filters=response_dict, limit=10)
             # retrieved_results = []
             # context ="\n\n".join([el.payload['page_content'] for el in search_results[0]])
@@ -212,7 +211,7 @@ def rag_answer_highlight(documents_list, query, options_number, hf_token):
     my_retriever = Retriever(vector_store=my_vector_store, reranker_model_name=_GLOBAL_RERANKERS["reranker_hf_model"])
     
 
-    login(hf_token)
+    # login(hf_token)
 
     print("Findin highlights for query:",query)
     print("-- Highlights RAG module activated --  SEMANTIC_SEARCH")
