@@ -133,7 +133,7 @@ def rag_answer(documents_list, dialogue_list, query, options_number, hf_token, c
             response_dict['luogo'] =  luoghi
             search_results = my_retriever.retrieve(query, k=15, filters=response_dict)
             filtered_results = my_retriever.rerank(query, search_results, k=5)
-            retrieved_results = [el['page_content'] for el in filtered_result]
+            retrieved_results = [el['page_content'] for el in filtered_results]
             return retrieved_results
 
 
