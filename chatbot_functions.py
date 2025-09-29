@@ -96,7 +96,7 @@ def stream_answer(documents_list, dialogue_list, user, tone, chatbot_is_first):
     stream = client.chat.completions.create(
         model=start_api_openai_model,
         messages=chatbot_prompt_list,
-        temperature=0.6,
+        temperature=0.5,
         stream=True
     )  
     
@@ -123,7 +123,7 @@ def generate_answer(documents_list, dialogue_list, user, tone, chatbot_is_first)
     message = client.chat.completions.create(
         model=start_api_openai_model,
         messages=chatbot_prompt_list,
-        temperature=0.6,
+        temperature=0.5,
         # max_completion_tokens=1000
     ).choices[0].message.content
 
