@@ -5,6 +5,10 @@ from .VectorStoreQdrant import VectorStore
 from .global_cache import _GLOBAL_RERANKERS  # import the global cache
 import statistics
 from typing import Tuple
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class Retriever:
     """
@@ -57,7 +61,7 @@ class Retriever:
         """
         Retrieves the top-k most relevant documents from the vector store.
         """
-        # print(f"Retrieving initial top {k} documents for query: '{query}'")
+        logger.info(f"Retrieving initial top {k} documents for query: '{query}'")
         # print(f"Using filters: {filters}")
         
         # retrieved_docs = self.vector_store.search(query, k=k)
@@ -67,7 +71,9 @@ class Retriever:
             # print("No documents retrieved from the vector store. Now running without filter.")
             retrieved_docs = self.vector_store.search(query, k=k)
         
-        # print(f"Found {len(retrieved_docs)} documents during initial retrieval.")
+   
+        # logger.info(f"Found {len(retrieved_docs)} documents during initial retrieval.")
+        # logger.info(retrieved_docs)
         return retrieved_docs
 
     def rerank(self, query: str, documents: List[Dict], k: int = 5) -> List[Dict]:
@@ -109,7 +115,8 @@ class Retriever:
 
         # Sort by rerank_score in descending order (highest score first)
         reranked_docs.sort(key=lambda x: x['rerank_score'], reverse=True)
-
+        # logger.info(f"Documents re-ranked successfully.")
+        # logger.info(reranked_docs[:k])
         # print("Documents re-ranked successfully.")
         return reranked_docs[:k]
 

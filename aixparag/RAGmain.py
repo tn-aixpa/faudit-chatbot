@@ -15,6 +15,10 @@ from .global_cache import _GLOBAL_RERANKERS, _GLOBAL_AMBITI, _GLOBAL_TASSONOMIE,
 import dill
 # from qdrant_client import QdrantClient
 # from langchain.vectorstores import Qdrant
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 
@@ -112,6 +116,8 @@ def rag_answer(documents_list, dialogue_list, query, options_number, hf_token, c
     vllm_model = VLLMModel()
     conversation = convert_conversation_format(dialogue_list)
     query = utils.expand_query(vllm_model, conversation)
+    logger.info("Expanded query:")
+    logger.info(query)
 
     # planner_res = utils.planner(vllm_model, query, conversation)
     planner_res = "YES"
@@ -123,17 +129,23 @@ def rag_answer(documents_list, dialogue_list, query, options_number, hf_token, c
         
         router = utils.sql_planner(vllm_model, query)
         if router == "DB_QUERY":
+            logger.info("Using DB_QUERY")
             response_dict = utils.exctract_metadata(vllm_model, query, conversation, tassonomie, ambiti, luoghi)
+            logger.info(f"Filters for retrieval: {response_dict}")
             search_results = my_vector_store.db_select(filters=response_dict, limit=10)
             retrieved_results =[el.payload['page_content'] for el in search_results[0]]
             return retrieved_results
 
         else:
+            logger.info("Using SEMANTIC_SEARCH")
             response_dict = dict()
             response_dict['luogo'] =  luoghi
-            search_results = my_retriever.retrieve(query, k=15, filters=response_dict)
+            logger.info(f"Filters for retrieval: {response_dict}")
+            search_results = my_retriever.retrieve(query, k=50, filters=response_dict)
             filtered_results = my_retriever.rerank(query, search_results, k=5)
             retrieved_results = [el['page_content'] for el in filtered_results]
+            # logger.info("Retrieved results:")
+            # logger.info(retrieved_results)
             return retrieved_results
 
 
@@ -158,7 +170,7 @@ def rag_answer_highlight(documents_list, query, options_number, hf_token):
     response_dict = dict()
     response_dict['luogo'] =  luoghi
     
-    search_results = my_retriever.retrieve(query, k=20, filters=response_dict)
+    search_results = my_retriever.retrieve(query, k=50, filters=response_dict)
     
     filtered_results,results_scores = my_retriever.rerank_scores(query, search_results, k=5)
     

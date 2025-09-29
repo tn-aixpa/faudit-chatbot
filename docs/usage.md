@@ -188,9 +188,9 @@ POST request taking in input a json with:
 
 `documents_list`: list of the document(s) from witch retrieve the chunks.
 
-`query`: the turn/answer to be grounded
+`query`: the answer from `/turn_generation` or `/turn_stream` to be grounded
 
-`options_number`: number of text chunks to retrieve
+`options_number`: max number of text chunks to retrieve
 
 ```json
 {
@@ -199,7 +199,7 @@ POST request taking in input a json with:
       "text of document 2",
       "text of document 3"
     ],
-  "query": "last turn/answer to be grounded",
+  "query": "answer to be grounded",
   "options_number": int
 
 }

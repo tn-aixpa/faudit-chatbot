@@ -11,7 +11,10 @@ from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from aixparag.RAGmain import rag_answer,rag_answer_highlight
 import datetime
+import logging
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def create_chat_prompt (documents_list, dialogue_list, user, tone, chatbot_is_first):
     
@@ -176,13 +179,16 @@ def generate_answer_rag(documents_list, dialogue_list, user, tone, chatbot_is_fi
     from start_api import start_api_openai_base_url, start_api_openai_key, start_api_openai_model
     
     output_rag = get_ground_rag(documents_list, dialogue_list, 5, hf_token, chatbot_is_first) #the number of item (5) do nothing
-
+    # logger.info("RAG output:")
+    # logger.info(output_rag)
     ground_rag = []
     for g in output_rag:
         ground_rag.append(g["text"])
-
+    # logger.info("RAG ground:")
+    # logger.info(ground_rag)
     chatbot_prompt_list = create_chat_prompt(ground_rag, dialogue_list, user, tone, chatbot_is_first)
-    
+    logger.info("Chatbot prompt list:")
+    logger.info(chatbot_prompt_list)
     # start = datetime.datetime.now().timestamp()
     client = OpenAI(
         base_url = start_api_openai_base_url,
@@ -252,8 +258,8 @@ def get_ground_highlight(documents_list, query, options_number, hf_token):
 
     grounds_list = [] 
 
-    print("retrieved_chunks LIST")
-    print(retrieved_chunks)
+    # print("retrieved_chunks LIST")
+    # print(retrieved_chunks)
 
     for chunk in retrieved_chunks:
         chunk = chunk.strip()
@@ -261,10 +267,12 @@ def get_ground_highlight(documents_list, query, options_number, hf_token):
             chunk_clean =  chunk.split("\n", 1)[1] if "\n" in chunk else ""
         else:
             chunk_clean = chunk
-        
-        for i, doc in enumerate(documents_list):
-            index_start, index_end = span.find_indexes(documents_list[i], chunk_clean)
 
+        found = False
+        for i, doc in enumerate(documents_list):
+            index_start, index_end = span.find_indexes(documents_list[i], chunk_clean.strip())
+            # logger.info("INDEXES", index_start, index_end, "DOC INDEX", i)
+            # logger.info("DOC INDEX", i,"First 100 chars of doc:", documents_list[i][:100])
             # Only add if indexes are valid
             if index_start is not None and index_end is not None:
                 ground_info = {
@@ -274,6 +282,15 @@ def get_ground_highlight(documents_list, query, options_number, hf_token):
                     "offset_end": index_end
                 }
                 grounds_list.append(ground_info)
+                found = True
+        
+        if not found:
+            grounds_list.append({
+                "text": chunk_clean,
+                "file_index": 0,  # or -1 if you prefer
+                "offset_start": 0,
+                "offset_end": 1
+            })
 
     return grounds_list
 
@@ -283,11 +300,9 @@ def get_ground_rag(documents_list, dialogue_list, options_number, hf_token, chat
     query = dialogue_list[-1]['turn_text']
     
     retrieved_chunks = rag_answer(documents_list, dialogue_list, query, options_number, hf_token, chatbot_is_first)
-    
+    # logger.info("Retrieved chunks (GROUND RAG):")
+    # logger.info(retrieved_chunks)
     grounds_list = [] 
-
-    # print("DOCUMENTS LIST")
-    # print(documents_list)
 
     for chunk in retrieved_chunks:
         
@@ -296,6 +311,7 @@ def get_ground_rag(documents_list, dialogue_list, options_number, hf_token, chat
         else:
             chunk_clean = chunk
         
+        found = False
         for i, doc in enumerate(documents_list):
             index_start, index_end = span.find_indexes(documents_list[i], chunk_clean)
 
@@ -308,7 +324,15 @@ def get_ground_rag(documents_list, dialogue_list, options_number, hf_token, chat
                     "offset_end": index_end
                 }
                 grounds_list.append(ground_info)
+                found = True
 
+        if not found:
+            grounds_list.append({
+                "text": chunk,
+                "file_index": 0,  # or -1 if you prefer
+                "offset_start": 0,
+                "offset_end": 1
+            })
     return grounds_list
 
 
