@@ -96,7 +96,7 @@ def stream_answer(documents_list, dialogue_list, user, tone, chatbot_is_first):
     stream = client.chat.completions.create(
         model=start_api_openai_model,
         messages=chatbot_prompt_list,
-        temperature=0.5,
+        temperature=0.2,
         stream=True
     )  
     
@@ -123,7 +123,7 @@ def generate_answer(documents_list, dialogue_list, user, tone, chatbot_is_first)
     message = client.chat.completions.create(
         model=start_api_openai_model,
         messages=chatbot_prompt_list,
-        temperature=0.5,
+        temperature=0.2,
         # max_completion_tokens=1000
     ).choices[0].message.content
 
@@ -162,7 +162,7 @@ def stream_answer_rag(documents_list, dialogue_list, user, tone, chatbot_is_firs
         # model="aixpa-new-ground",
         model = start_api_openai_model,
         messages=chatbot_prompt_list,
-        temperature=0.6,
+        temperature=0.2,
         stream=True
     )  
     
@@ -202,7 +202,7 @@ def generate_answer_rag(documents_list, dialogue_list, user, tone, chatbot_is_fi
         # model="mask048",
         # model="aixpa",
         messages=chatbot_prompt_list,
-        temperature=0.6,
+        temperature=0.2,
         # max_completion_tokens=1000
     ).choices[0].message.content
     # end = datetime.datetime.now().timestamp()
