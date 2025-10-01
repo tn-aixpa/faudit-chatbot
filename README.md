@@ -21,6 +21,7 @@ Tool usage documentation [here](./docs/usage.md).
 
 ## How To
 
+- [Prepare vector store dataset](./docs/howto/data.md)
 - [Deploy, expose, and test the chatbot API in production mode](./docs/howto/deploy.md)
 - [Deploy, expose, the chatbot API in mock mode (without LLM)](./docs/howto/deploymock.md)
 

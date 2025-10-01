@@ -14,7 +14,7 @@ project = dh.get_or_create_project("faudit-classifier")
 2. Define the service function with the container runtime.
 
 ```python
-chatbot_function = project.new_function(name="chatbot", kind="container", image="ghcr.io/tn-aixpa/faudit-chatbot:0.1.4")
+chatbot_function = project.new_function(name="chatbot", kind="container", image="ghcr.io/tn-aixpa/faudit-chatbot:0.2.8")
 ```
 
 3. Deploy the service running the function a
