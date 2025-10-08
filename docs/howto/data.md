@@ -7,16 +7,37 @@
 
 ```python
 import digitalhub as dh
-project = dh.get_or_create_project("faudit-classifier")
+project = dh.get_or_create_project("faudit-chatbot")
 ```
 
-2. Create the data artifact from the documents and upload it to the platform.
+2. Create the data artifact from the documents and upload it to the platform. It is expected to have the data as a collection of ``txt`` files each containing
+a list of plans containing reference to title, description, objective, taxonomy element, and macro area. For example:
+
+```
+=== PIANO FAMIGLIA COMUNE DI ROMA ANNO 2025 ===
+
+TITOLO: Titolo del'azione
+DESCRIZIONE: Test di descizione dell'azione
+OBIETTIVO: Sensibilizzare, informare e formare il mondo scolastico.
+TASSONOMIA: Attivitа  di educazione ambientale (laboratori, giornate ecologiche, giornata del riuso, raccolta differenziata)
+MACRO-AMBITO: Comunitа educante
+
+-----
+
+TITOLO: Titolo del'azione
+DESCRIZIONE: Test di descizione dell'azione
+OBIETTIVO: Sensibilizzare, informare e formare il mondo scolastico.
+TASSONOMIA: Attivitа  di educazione ambientale (laboratori, giornate ecologiche, giornata del riuso, raccolta differenziata)
+MACRO-AMBITO: Comunitа educante
+
+```
+
 
 ```python
 art = project.log_artifact("rag_documents", kind="artifact", source="./RAG_documents")
 ```
 
-3. Define the processing function with the container runtime.
+1. Define the processing function with the container runtime.
 
 ```python
 chatbot_function = project.new_function(name="chatbot", kind="container", image="ghcr.io/tn-aixpa/faudit-chatbot:0.2.8")

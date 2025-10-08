@@ -13,7 +13,7 @@
 
 ```python
 import digitalhub as dh
-project = dh.get_or_create_project("faudit-classifier")
+project = dh.get_or_create_project("faudit-chatbot")
 ```
 
 2. Define the service function with the container runtime.
