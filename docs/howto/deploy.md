@@ -25,14 +25,20 @@ chatbot_function = project.new_function(name="chatbot", kind="container", image=
 3. Deploy the service running the function a
 
 ```python
-chatbot_run = chatbot_function.run(action="serve", args=["--openai_base_url=http://kubeai/openai/v1", "--openai_key=123", "--openai_model=llama-3.1-l3932bc61aedb4628820a010311e1cf42_famiglia", "--openai_base_model=llama-3.1-l3932bc61aedb4628820a010311e1cf42", "--storage_artifact=rag_storage"], service_type="ClusterIP", service_ports=[{"port": 8018, "target_port": 8018}])
+chatbot_run = chatbot_function.run(
+    action="serve", 
+    args=["--openai_base_url=http://kubeai/openai/v1", "--openai_key=123", "--openai_model=llama-3.1-l3932bc61aedb4628820a010311e1cf42_famiglia", "--openai_base_model=llama-3.1-l3932bc61aedb4628820a010311e1cf42", "--storage_artifact=rag_storage"], 
+    service_type="NodePort", 
+    service_ports=[{"port": 8018, "target_port": 8018}],
+    secrets=["HF_TOKEN"]
+)
 ```
 
-The model name is constructed from the name of the deployed model and the adapter. To see the available model names use the KubeAI models endpoint:
+Note the parameters of the execution:
 
-```
-curl http://kubeai/openai/v1/models
-```
+- openai_model is used to reference to the model (adapter) for generation task
+- openai_base_model is the base model to be used for specific tasks (eg., query rewriting)  
+- secrets to make at least reference for HuggingFace token 
 
 
 Once deployed, the internal service endpoint may be recovered as follows:
